@@ -20,7 +20,7 @@ config : Config
 config =
     { worldSizeCells =
         { x = 16, y = 12 }
-    , snakeMoveIntervalInMilliseconds = Just 125
+    , snakeMoveIntervalInMilliseconds = Nothing
     }
 
 
