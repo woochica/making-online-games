@@ -64,7 +64,14 @@ main =
                             , update = moveSnakeForwardOneStep
                             }
                     )
-        , updateOnKeyDown = Just onKeyDown
+        , updateOnKeyDown =
+            Just
+                (\{ keyCode } gameState ->
+                    parseSnakeDirection keyCode
+                        |> Maybe.map (\snakeDirection -> updateSnakeDirection snakeDirection gameState)
+                        |> Maybe.map moveSnakeForwardOneStep
+                        |> Maybe.withDefault gameState
+                )
         , updateOnKeyUp = Nothing
         }
 
