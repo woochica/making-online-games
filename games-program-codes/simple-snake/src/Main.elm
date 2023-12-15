@@ -195,9 +195,8 @@ renderToPicture gameState =
             Playground.rectangle Playground.black worldWidth worldHeight
 
         snakeShape =
-            gameState.snake.headLocation
-                :: gameState.snake.tailSegments
-                |> List.map (rectangleAtCellLocation Playground.lightGrey)
+            (gameState.snake.headLocation |> rectangleAtCellLocation Playground.lightGreen)
+                :: (gameState.snake.tailSegments |> List.map (rectangleAtCellLocation Playground.lightGrey))
                 |> Playground.group
 
         appleShape =
