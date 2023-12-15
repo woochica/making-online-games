@@ -12,6 +12,7 @@ import SimpleGameDev exposing (listDictGet, listRemoveSet)
 
 type alias Config =
     { worldSizeCells : { x : Int, y : Int }
+    , snakeMoveIntervalInMilliseconds : Maybe Int
     }
 
 
@@ -19,6 +20,7 @@ config : Config
 config =
     { worldSizeCells =
         { x = 16, y = 12 }
+    , snakeMoveIntervalInMilliseconds = Just 125
     }
 
 
@@ -54,12 +56,14 @@ main =
         { initialState = initialState
         , view = SimpleGameDev.pictureView renderToPicture
         , updateBasedOnTime =
-            Just
-                (SimpleGameDev.updateWithFixedInterval
-                    { intervalInMilliseconds = 125
-                    , update = moveSnakeForwardOneStep
-                    }
-                )
+            config.snakeMoveIntervalInMilliseconds
+                |> Maybe.map
+                    (\milliseconds ->
+                        SimpleGameDev.updateWithFixedInterval
+                            { intervalInMilliseconds = milliseconds
+                            , update = moveSnakeForwardOneStep
+                            }
+                    )
         , updateOnKeyDown = Just onKeyDown
         , updateOnKeyUp = Nothing
         }
@@ -85,18 +89,18 @@ snakeDirectionFromKeyboardKey =
     ]
 
 
-onKeyDown : SimpleGameDev.KeyboardEventStructure -> GameState -> GameState
-onKeyDown keyboardEvent gameStateBefore =
-    case snakeDirectionFromKeyboardKey |> listDictGet keyboardEvent.keyCode of
-        Nothing ->
-            gameStateBefore
+parseSnakeDirection : Keyboard.Key.Key -> Maybe SnakeDirection
+parseSnakeDirection keyCode =
+    snakeDirectionFromKeyboardKey |> listDictGet keyCode
 
-        Just snakeDirection ->
-            let
-                snakeBefore =
-                    gameStateBefore.snake
-            in
-            { gameStateBefore | snake = { snakeBefore | headDirection = snakeDirection } }
+
+updateSnakeDirection : SnakeDirection -> GameState -> GameState
+updateSnakeDirection snakeDirection gameStateBefore =
+    let
+        snakeBefore =
+            gameStateBefore.snake
+    in
+    { gameStateBefore | snake = { snakeBefore | headDirection = snakeDirection } }
 
 
 xyOffsetFromDirection : SnakeDirection -> { x : Int, y : Int }
