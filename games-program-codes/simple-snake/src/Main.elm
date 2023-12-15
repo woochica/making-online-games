@@ -10,9 +10,16 @@ import Playground
 import SimpleGameDev exposing (listDictGet, listRemoveSet)
 
 
-worldSizeCells : { x : Int, y : Int }
-worldSizeCells =
-    { x = 16, y = 12 }
+type alias Config =
+    { worldSizeCells : { x : Int, y : Int }
+    }
+
+
+config : Config
+config =
+    { worldSizeCells =
+        { x = 16, y = 12 }
+    }
 
 
 type SnakeDirection
@@ -126,8 +133,8 @@ moveSnakeForwardOneStep gameStateBefore =
             }
 
         headLocation =
-            { x = (headLocationBeforeWrapping.x + worldSizeCells.x) |> modBy worldSizeCells.x
-            , y = (headLocationBeforeWrapping.y + worldSizeCells.y) |> modBy worldSizeCells.y
+            { x = (headLocationBeforeWrapping.x + config.worldSizeCells.x) |> modBy config.worldSizeCells.x
+            , y = (headLocationBeforeWrapping.y + config.worldSizeCells.y) |> modBy config.worldSizeCells.y
             }
 
         snakeEats =
@@ -155,10 +162,10 @@ moveSnakeForwardOneStep gameStateBefore =
             else
                 let
                     cellsLocationsWithoutSnake =
-                        List.range 0 (worldSizeCells.x - 1)
+                        List.range 0 (config.worldSizeCells.x - 1)
                             |> List.concatMap
                                 (\x ->
-                                    List.range 0 (worldSizeCells.y - 1)
+                                    List.range 0 (config.worldSizeCells.y - 1)
                                         |> List.map (\y -> { x = x, y = y })
                                 )
                             |> listRemoveSet (headLocation :: tailSegments)
@@ -181,10 +188,10 @@ renderToPicture gameState =
             30
 
         worldWidth =
-            cellSideLength * toFloat worldSizeCells.x
+            cellSideLength * toFloat config.worldSizeCells.x
 
         worldHeight =
-            cellSideLength * toFloat worldSizeCells.y
+            cellSideLength * toFloat config.worldSizeCells.y
 
         rectangleAtCellLocation fill cellLocation =
             Playground.rectangle fill (cellSideLength - 2) (cellSideLength - 2)
